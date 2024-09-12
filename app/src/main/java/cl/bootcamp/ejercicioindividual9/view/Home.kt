@@ -35,29 +35,36 @@ import cl.bootcamp.ejercicioindividual9.R
 @Preview(showBackground = true)
 @Composable
 fun Pantalla(modifier: Modifier = Modifier) {
+    var peso by remember { mutableStateOf("") }
+    var altura by remember { mutableStateOf("") }
+    var edad by remember { mutableStateOf("") }
+    var result by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text1()
+        TextTitulo()
         Spacio()
         MultiBtn()
         Spacio()
-        Tex2()
+        TexEdad(edad) { edad = it }
         Spacio()
-        Tex3()
+        TexPeso(peso) { peso = it }
         Spacio()
-        Tex4()
-        Btn()
+        TexAltura(altura) { altura = it }
+        BtnCalcular {
+            result = Calculo(peso, altura).toString()
+        }
         Spacio()
+        TexResult(result)
     }
-
 }
 
 
 @Composable
-fun Text1() {
+fun TextTitulo() {
     Text(
         text = stringResource(id = R.string.calculadora),
         fontSize = 40.sp,
@@ -72,10 +79,10 @@ fun Text1() {
 
 
 @Composable
-fun Btn() {
+fun BtnCalcular(onClick: () -> Unit) {
 
     Button(
-        onClick = { /*TODO*/ },
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
             containerColor = Color.hsl(241f, 0.43f, 0.27f)
@@ -131,41 +138,32 @@ fun MultiBtn() {
 
 
 @Composable
-fun Tex2() {
-    var prueba by remember {
-        mutableStateOf("")
-    }
-
+fun TexEdad(edad: String, onEdadChange: (String) -> Unit) {
     OutlinedTextField(
-        value = prueba,
-        onValueChange = { texto -> prueba = texto },
+        value = edad,
+        onValueChange = onEdadChange,
         placeholder = { Text(text = stringResource(id = R.string.edad)) }
     )
 }
 
 
 @Composable
-fun Tex3() {
-    var prueba by remember {
-        mutableStateOf("")
-    }
-
+fun TexPeso(peso: String, onPesoChange: (String) -> Unit) {
     OutlinedTextField(
-        value = prueba,
-        onValueChange = { texto -> prueba = texto },
+        value = peso,
+        onValueChange = onPesoChange,
         placeholder = { Text(text = stringResource(id = R.string.peso)) }
     )
 }
 
+
 @Composable
-fun Tex4() {
-    var prueba by remember {
-        mutableStateOf("")
-    }
+fun TexAltura(altura: String, onAlturaChange: (String) -> Unit) {
+
 
     OutlinedTextField(
-        value = prueba,
-        onValueChange = { texto -> prueba = texto },
+        value = altura,
+        onValueChange = onAlturaChange,
         placeholder = { Text(text = stringResource(id = R.string.altura)) }
     )
 }
@@ -173,4 +171,23 @@ fun Tex4() {
 @Composable
 fun Spacio() {
     Spacer(modifier = Modifier.height(20.dp))
+}
+
+@Composable
+fun TexResult(result: String) {
+    Text(
+        text = result,
+        fontSize = 40.sp,
+        fontWeight = FontWeight.ExtraBold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        textAlign = TextAlign.Center
+    )
+}
+fun Calculo(peso: String, altura: String): Float {
+    val pesoD = peso.toDoubleOrNull() ?: 0.0
+    val alturaD = altura.toDoubleOrNull() ?: 0.0
+    var resultimc =  (pesoD / (alturaD * alturaD)*10000).toFloat()
+    return kotlin.math.round(resultimc)
 }
